@@ -173,20 +173,7 @@ async function run() {
         });
 
 
-        //update
-        app.put("/campaign/:id", async (req, res) => {
-            const id = req.params.id;
-            const campaign = req.body;
-
-            const result = await helpCollection.updateOne(
-                { _id: ObjectId(id) }, // Find Data by query many time query type is "_id: id" Cheack on database
-                {
-                    $set: campaign, // Set updated Data
-                },
-                { upsert: true } // define work
-            );
-            res.send({ result });
-        });
+   
 
 
 
@@ -279,6 +266,68 @@ async function run() {
             res.send(experts);
         });
 
+        //get experts by role
+
+      
+        app.get('/experts/:role',async(req,res)=>{
+            const role = req.params.role;
+            const query = {role:role}
+            const user = await expertsCollection.find(query).toArray();
+            
+            res.send(user);
+          })
+
+        //post experts
+        app.post("/experts", async (req, res) => {
+            const expertAdd = req.body;
+            const result = await expertsCollection.insertOne(expertAdd);
+            res.send(result);
+        });
+
+        //delete experts
+        app.delete('/experts/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = {
+                _id: ObjectId(id)
+            };
+            const result = await expertsCollection.deleteOne(filter);
+            res.send(result);
+        })
+
+
+        //get experts by id
+
+        app.get('/expertSingle/:id', async (req, res) => {
+            const id = req.params.id;
+
+            const query = { _id: ObjectId(id) };
+            const result = await expertsCollection.findOne(query);
+            res.send(result)
+        })
+          //update
+          app.put('/experts/:id',async(req,res)=>{
+            const id = req.params.id;
+            const filter = {_id: ObjectId(id)};
+            const expert= req.body;
+            const option = {upsert:true};
+            const updatedExpert = {
+              $set: {
+                name: expert.name,
+               
+                facebook: expert.facebook,
+                twitter: expert.twitter,
+                instagram: expert.instagram,
+                google: expert.google,
+                img: expert.img,
+                short_description: expert.short_description,
+                role: expert.role,
+                phone: expert.phone
+              }
+      
+            }
+            const result = await expertsCollection.updateOne(filter, updatedExpert, option);
+            res.send(result);
+          })
 
 
 
