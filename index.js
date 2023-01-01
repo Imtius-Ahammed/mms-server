@@ -531,6 +531,17 @@ async function run() {
       res.send(allbuyer);
     });
 
+    //get all user donation for admin routes
+    app.get('/checkout/:paid',async (req,res)=>{
+      const paid = req.params.paid;
+      const query = {
+        paid: true
+      
+      };
+      const allbuyer = await grantInfoCollection.find(query).toArray();
+      res.send(allbuyer);
+    });
+
     app.get("/grant-info/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
